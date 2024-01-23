@@ -1,19 +1,15 @@
-{	
-	"author":"Bruno De Cruz",
-	"description": "A project that does something awesome",
-	"name": "fcc-learn-npm-package-json",
-	"keywords": ["freecodecamp"],
-	"dependencies": {
-		"express": "^4.14.0"
-	},
-	"license": "MIT",
-	"main": "server.js",
-	"scripts": {
-		"start": "node server.js"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/freeCodeCamp/boilerplate-npm.git"
-	},
-	"version": "1.2.0"
+{
+  "name": "fcc-learn-node-with-express",
+  "version": "0.1.0",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^16.0.1",
+    "express": "^4.14.0",
+    "fcc-express-bground": "https://github.com/freeCodeCamp/fcc-express-bground-pkg.git"
+  },
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
 }

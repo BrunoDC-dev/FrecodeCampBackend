@@ -5,7 +5,7 @@
 	"keywords": ["freecodecamp"],
 	"dependencies": {
 		"express": "^4.14.0",
-		"@freecodecamp/example": "~1.2.13"
+		"@freecodecamp/example": "^1.2.13"
 	},
 	"license": "MIT",
 	"main": "server.js",

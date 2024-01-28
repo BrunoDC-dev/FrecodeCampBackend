@@ -4,7 +4,8 @@ let bodyParser = require('body-parser');
 let express = require('express');
 const req = require('express/lib/request');
 let app = express();
-bodyParser.urlencoded({extended: false});
+app.use(bodyParser.urlencoded({ extended: false }));
+
 
 console.log("Hello World");
 //ip logger

@@ -1,25 +1,28 @@
 {
-  "name": "fcc-mongo-mongoose-challenges",
+  "name": "fcc-api-projects-boilerplate",
   "version": "0.0.1",
-  "description": "A boilerplate project",
-  "main": "server.js",
+  "description": "An FCC Backend Challenge",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node index.js"
   },
   "dependencies": {
-    "body-parser": "^1.15.2",
-    "dotenv": "^8.2.0",
     "express": "^4.12.4",
-    "mongoose": "^5.11.15"
+    "cors": "^2.8.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/freeCodeCamp/boilerplate-mongomongoose.git"
+    "url": "https://github.com/freeCodeCamp/boilerplate-project-timestamp.git"
   },
+  "bugs": {
+    "url": "https://github.com/freeCodeCamp/freeCodeCamp/issues"
+  },
+  "homepage": "https://github.com/freeCodeCamp/boilerplate-project-timestamp#readme",
+  "author": "freeCodeCamp <team@freecodecamp.org>",
   "keywords": [
     "node",
-    "mongoose",
-    "express"
+    "express",
+    "freeCodeCamp"
   ],
   "license": "MIT"
 }

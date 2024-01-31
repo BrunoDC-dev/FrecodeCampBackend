@@ -13,15 +13,24 @@ app.get("/api", (req, res) => {
   res.json({unix: Date.now(), utc: Date()});
 })
 
-app.get("/api/:date", (req, res) => {
+app.get("/api/:date?", (req, res) => {
   let date = req.params.date;
-  if (/\d{5,}/.test(date)) {
-    date = +date;
+
+  // If no date is provided, use the current date
+  if (!date) {
+    date = new Date();
+  } else {
+    // Check if date is a unix timestamp
+    if (/\d{5,}/.test(date)) {
+      date = parseInt(date);
+    }
+    date = new Date(date);
   }
-  let dateObj = new Date(date);
-  if (dateObj.toString() === "Invalid Date") {
+
+  // Check if date is valid
+  if (date.toUTCString() === "Invalid Date") {
     res.json({error: "Invalid Date"});
   } else {
-    res.json({unix: dateObj.valueOf(), utc: dateObj.toUTCString()});
+    res.json({unix: date.getTime(), utc: date.toUTCString()});
   }
-})
+});

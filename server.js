@@ -6,6 +6,9 @@ var express = require('express');
 var app = express();
 const dns = require('dns');
 const urlParser = require('url');
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 

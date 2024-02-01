@@ -64,7 +64,7 @@ app.get("/api/shorturl/:short_url", (req, res) => {
     res.json({ error: 'invalid url' });
   }
 });
-
+/*
 app.get("/api", (req, res) => {
   res.json({unix: Date.now(), utc: Date()});
 })
@@ -80,6 +80,7 @@ app.get("/api/:date", (req, res) => {
     res.json({unix: dateObj.valueOf(), utc: dateObj.toUTCString()});
   }
 })
+*/
 
 
 // listen for requests :)

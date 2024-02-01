@@ -36,9 +36,13 @@ let id = 0;
 
 app.post("/api/shorturl", (req, res) => {
   const originalUrl = req.body.url;
-  const urlObject = urlParser.parse(originalUrl);
+  
+  if (!originalUrl) {
+    res.json({ error: 'invalid url' });
+    return;
+  }
 
-  // Check if the URL is valid
+  const urlObject = urlParser.parse(originalUrl);
   dns.lookup(urlObject.hostname, (err) => {
     if (err) {
       res.json({ error: 'invalid url' });

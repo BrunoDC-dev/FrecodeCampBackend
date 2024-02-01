@@ -34,15 +34,18 @@ app.get("/api/whoami", (req, res) => {
 let urlDatabase = {};
 let id = 0;
 
-app.post("/api/shorturl", (req, res) => {
+aapp.post("/api/shorturl", (req, res) => {
   const originalUrl = req.body.url;
-  
-  if (!originalUrl) {
+  const urlObject = urlParser.parse(originalUrl);
+
+  // Check if the URL is in the correct format
+  const urlRegex = /^(http|https):\/\/[^ "]+$/;
+  if (!urlRegex.test(originalUrl)) {
     res.json({ error: 'invalid url' });
     return;
   }
 
-  const urlObject = urlParser.parse(originalUrl);
+  // Check if the hostname exists
   dns.lookup(urlObject.hostname, (err) => {
     if (err) {
       res.json({ error: 'invalid url' });

@@ -4,6 +4,8 @@
 // init project
 var express = require('express');
 var app = express();
+const dns = require('dns');
+const urlParser = require('url');
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
@@ -26,6 +28,35 @@ app.get("/api/hello", function (req, res) {
 app.get("/api/whoami", (req, res) => {
   res.json({ipaddress: req.ip, language: req.headers["accept-language"], software: req.headers["user-agent"]});
 })
+let urlDatabase = {};
+let id = 0;
+
+app.post("/api/shorturl", (req, res) => {
+  const originalUrl = req.body.url;
+  const urlObject = urlParser.parse(originalUrl);
+
+  // Check if the URL is valid
+  dns.lookup(urlObject.hostname, (err) => {
+    if (err) {
+      res.json({ error: 'invalid url' });
+    } else {
+      const shortUrl = id++;
+      urlDatabase[shortUrl] = originalUrl;
+      res.json({ original_url: originalUrl, short_url: shortUrl });
+    }
+  });
+});
+
+app.get("/api/shorturl/:short_url", (req, res) => {
+  const shortUrl = req.params.short_url;
+  const originalUrl = urlDatabase[shortUrl];
+
+  if (originalUrl) {
+    res.redirect(originalUrl);
+  } else {
+    res.json({ error: 'invalid url' });
+  }
+});
 
 app.get("/api", (req, res) => {
   res.json({unix: Date.now(), utc: Date()});

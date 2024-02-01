@@ -34,7 +34,7 @@ app.get("/api/whoami", (req, res) => {
 let urlDatabase = {};
 let id = 0;
 
-aapp.post("/api/shorturl", (req, res) => {
+app.post("/api/shorturl", (req, res) => {
   const originalUrl = req.body.url;
   const urlObject = urlParser.parse(originalUrl);
 

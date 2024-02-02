@@ -7,9 +7,53 @@ var app = express();
 const dns = require('dns');
 const urlParser = require('url');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+require('dotenv').config();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+const userSchema = new mongoose.Schema({
+  username: String,
+  exercises: [{
+    description: String,
+    duration: Number,
+    date: Date
+  }]
+});
+
+const User = mongoose.model('User', userSchema);
+
+app.post('/api/users', (req, res) => {
+  const newUser = new User({ username: req.body.username });
+  newUser.save((err, savedUser) => {
+    if (err) return console.error(err);
+    res.json(savedUser);
+  });
+});
+
+app.post('/api/users/:_id/exercises', (req, res) => {
+  User.findById(req.params._id, (err, foundUser) => {
+    if (err) return console.error(err);
+    foundUser.exercises.push({
+      description: req.body.description,
+      duration: req.body.duration,
+      date: req.body.date ? new Date(req.body.date) : new Date()
+    });
+    foundUser.save((err, updatedUser) => {
+      if (err) return console.error(err);
+      res.json(updatedUser);
+    });
+  });
+});
+
+app.get('/api/users/:_id/logs', (req, res) => {
+  User.findById(req.params._id, (err, foundUser) => {
+    if (err) return console.error(err);
+    res.json(foundUser.exercises);
+  });
+});
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
 var cors = require('cors');

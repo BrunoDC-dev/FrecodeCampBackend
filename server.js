@@ -27,25 +27,31 @@ const User = mongoose.model('User', userSchema);
 
 app.post('/api/users', (req, res) => {
   const newUser = new User({ username: req.body.username });
-  newUser.save((err, savedUser) => {
-    if (err) return console.error(err);
-    res.json(savedUser);
-  });
+  newUser.save()
+    .then(savedUser => {
+      res.json(savedUser);
+    })
+    .catch(err => {
+      console.error(err);
+    });
 });
 
 app.post('/api/users/:_id/exercises', (req, res) => {
-  User.findById(req.params._id, (err, foundUser) => {
-    if (err) return console.error(err);
-    foundUser.exercises.push({
-      description: req.body.description,
-      duration: req.body.duration,
-      date: req.body.date ? new Date(req.body.date) : new Date()
-    });
-    foundUser.save((err, updatedUser) => {
-      if (err) return console.error(err);
+  User.findById(req.params._id)
+    .then(foundUser => {
+      foundUser.exercises.push({
+        description: req.body.description,
+        duration: req.body.duration,
+        date: req.body.date ? new Date(req.body.date) : new Date()
+      });
+      return foundUser.save();
+    })
+    .then(updatedUser => {
       res.json(updatedUser);
+    })
+    .catch(err => {
+      console.error(err);
     });
-  });
 });
 
 app.get('/api/users/:_id/logs', (req, res) => {

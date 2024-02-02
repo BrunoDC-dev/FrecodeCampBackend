@@ -14,13 +14,15 @@ app.use(bodyParser.json());
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
+const exerciseSchema = new mongoose.Schema({
+  description: String,
+  duration: Number,
+  date: String,
+});
+
 const userSchema = new mongoose.Schema({
   username: String,
-  exercises: [{
-    description: String,
-    duration: Number,
-    date: Date
-  }]
+  log: [exerciseSchema]
 });
 
 const User = mongoose.model('User', userSchema);
@@ -29,7 +31,17 @@ app.post('/api/users', (req, res) => {
   const newUser = new User({ username: req.body.username });
   newUser.save()
     .then(savedUser => {
-      res.json(savedUser);
+      res.json({ username: savedUser.username, _id: savedUser._id });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+});
+
+app.get('/api/users', (req, res) => {
+  User.find()
+    .then(users => {
+      res.json(users);
     })
     .catch(err => {
       console.error(err);
@@ -37,28 +49,69 @@ app.post('/api/users', (req, res) => {
 });
 
 app.post('/api/users/:_id/exercises', (req, res) => {
+  const exercise = {
+    description: req.body.description,
+    duration: parseInt(req.body.duration),
+    date: (req.body.date) ? new Date(req.body.date).toDateString() : new Date().toDateString()
+  };
+
+  User.findByIdAndUpdate(
+    req.params._id,
+    { $push: { log: exercise } },
+    { new: true }
+  )
+  .then(updatedUser => {
+    const response = {
+      _id: updatedUser._id,
+      username: updatedUser.username,
+      date: new Date(exercise.date).toDateString(),
+      duration: exercise.duration,
+      description: exercise.description
+    };
+    res.json(response);
+  })
+  .catch(err => {
+    console.error(err);
+  });
+});
+
+app.get('/api/users/:_id/logs', (req, res) => {
   User.findById(req.params._id)
-    .then(foundUser => {
-      foundUser.exercises.push({
-        description: req.body.description,
-        duration: req.body.duration,
-        date: req.body.date ? new Date(req.body.date) : new Date()
-      });
-      return foundUser.save();
-    })
-    .then(updatedUser => {
-      res.json(updatedUser);
+    .then(user => {
+      let response = user;
+      if (req.query.from || req.query.to) {
+        let fromDate = new Date(0);
+        let toDate = new Date();
+
+        if (req.query.from) {
+          fromDate = new Date(req.query.from);
+        }
+
+        if (req.query.to) {
+          toDate = new Date(req.query.to);
+        }
+
+        fromDate = fromDate.getTime();
+        toDate = toDate.getTime();
+
+        response.log = response.log.filter((session) => {
+          let sessionDate = new Date(session.date).getTime();
+
+          return sessionDate >= fromDate && sessionDate <= toDate;
+        });
+      }
+
+      if (req.query.limit) {
+        response.log = response.log.slice(0, req.query.limit);
+      }
+
+      response = response.toJSON();
+      response['count'] = user.log.length;
+      res.json(response);
     })
     .catch(err => {
       console.error(err);
     });
-});
-
-app.get('/api/users/:_id/logs', (req, res) => {
-  User.findById(req.params._id, (err, foundUser) => {
-    if (err) return console.error(err);
-    res.json(foundUser.exercises);
-  });
 });
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 

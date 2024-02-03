@@ -8,6 +8,9 @@ const dns = require('dns');
 const urlParser = require('url');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const multer  = require('multer');
+const upload = multer({ dest: 'uploads/' });
+
 require('dotenv').config();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -126,6 +129,14 @@ app.get('/api/users/:_id/logs', (req, res) => {
     });
 });
 
+
+app.post('/api/fileanalyse', upload.single('upfile'), (req, res) => {
+  res.json({
+    name: req.file.originalname,
+    type: req.file.mimetype,
+    size: req.file.size
+  });
+});
 
 // your first API endpoint... 
 app.get("/api/hello", function (req, res) {
